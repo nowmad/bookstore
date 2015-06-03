@@ -1,12 +1,16 @@
 class ListingsController < ApplicationController
   before_action :set_listing, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, only: [:new, :edit, :update, :destroy]
+  before_filter :authenticate_user!, only: [:seller, :new, :edit, :update, :destroy]
   before_filter :check_user, only: [:edit, :update, :destroy]
+
+  def seller
+    @listings = Listing.where(user: current_user).order("created_at DESC")
+  end
 
   # GET /listings
   # GET /listings.json
   def index
-    @listings = Listing.all
+    @listings = Listing.all.order("created_at DESC")
   end
 
   # GET /listings/1
@@ -81,5 +85,5 @@ class ListingsController < ApplicationController
         redirect_to root_url, alert: "Sorry, this listing belongs to someone else"
       end
     end
-    
+
 end
